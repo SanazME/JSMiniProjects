@@ -13,7 +13,7 @@ GAME RULES:
 var scores, roundScore, activePlayer, gameEnd;
 
 // Initialize the game
-startGame();
+resetGame();
 
 // Click Roll button
 clickRollDice();
@@ -21,18 +21,27 @@ clickRollDice();
 // Click on hold
 clickHold();
 
+// Click on New button
+document.querySelector('.btn-new').addEventListener('click', resetGame);
 
-function startGame() {
+function resetGame() {
     scores = [0, 0];
     roundScore = 0;
-    activePlayer = 1;
-    // Hide the dice
-    document.querySelector('.dice').style.display = 'none';
-    // Set current- and score- ids to zero
-    document.querySelector('#current-0').textContent = 0;
-    document.querySelector('#current-1').textContent = 0;
+    activePlayer = 0;
+    // reset scores
+    resetCurrentScore();
     document.querySelector('#score-0').textContent = 0;
     document.querySelector('#score-1').textContent = 0;
+    // Rest names
+    document.querySelector('#name-0').textContent = 'Player 1';
+    document.querySelector('#name-1').textContent = 'Player 2';
+    // Remove winner class
+    document.querySelector('.player-0-panel').classList.remove('winner');
+    document.querySelector('.player-1-panel').classList.remove('winner');
+    // 
+    document.querySelector('.player-0-panel').classList.remove('active');
+    document.querySelector('.player-1-panel').classList.remove('active');
+    document.querySelector('.player-0-panel').classList.add('active');
 }
 
 function clickRollDice() {
@@ -57,51 +66,50 @@ function clickRollDice() {
 
 function clickHold() {
     document.querySelector('.btn-hold').addEventListener('click', () => {
-        switchActivePlayer();
+        // Update global score with the current score
+        scores[activePlayer] += roundScore;
+        document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
+
+        // Check if user has won
+        if (scores[activePlayer] >= 20) {
+            document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
+            document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
+            // resetGame();
+        } else {
+            // Switch user
+            switchActivePlayer();
+        }
     })
-
 }
-
-function gameTerminate() {
-    var content = document.querySelector('#name-' + activePlayer).textContent;
-    document.querySelector('#name-' + activePlayer).innerHTML = '<b>' + content + '</b>' + '<br>' + '<p> Winner!</p>';
-    // startGame();
-}
-/*
-function rollDice() {
-    // Roll the dice
-    var dice = Math.floor(Math.random() * 6) + 1;
-    // console.log('dice: ', dice)
-
-    // Display dice with correct number
-    document.querySelector('.dice').style.display = 'block';
-    document.querySelector('.dice').src = 'dice-' + dice + '.png';
-
-    // Set the score based on round Score
-    updateScores(dice);
-    // Change active player if dice === 1
-    updateActivePlayer(dice);
-}
-*/
 
 function switchActivePlayer() {
-    return activePlayer = activePlayer === 1 ? 0 : 1;
+    // switch active player
+    activePlayer = activePlayer === 1 ? 0 : 1;
+    // Toggle active class to active player
+    document.querySelector('.player-0-panel').classList.toggle('active');
+    document.querySelector('.player-1-panel').classList.toggle('active');
+    // Reset current score
+    resetCurrentScore();
+
+    return activePlayer
 }
 
 function updateScores(dice) {
     // Calculate roundScore
-    roundScore = dice === 1 ? 0 : dice;
+    roundScore += dice === 1 ? 0 : dice;
     // update current score
     document.querySelector('#current-' + activePlayer).textContent = roundScore;
-    // update total score
-    scores[activePlayer] += roundScore;
-    document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
-
-    if (scores[activePlayer] >= 100) {
-        gameTerminate();
-    }
 }
 
 function updateActivePlayer(dice) {
     activePlayer = dice === 1 ? switchActivePlayer() : activePlayer;
+}
+
+function resetCurrentScore() {
+    // Set current- and score- ids to zero
+    roundScore = 0
+    document.querySelector('#current-0').textContent = 0;
+    document.querySelector('#current-1').textContent = 0;
+    // Hide dice
+    document.querySelector('.dice').style.display = 'none';
 }
