@@ -10,7 +10,7 @@ GAME RULES:
 */
 
 // Declare variables
-var scores, roundScore, activePlayer;
+var scores, roundScore, activePlayer, gameEnd;
 
 // Initialize the game
 startGame();
@@ -22,13 +22,17 @@ clickRollDice();
 clickHold();
 
 
-
 function startGame() {
     scores = [0, 0];
     roundScore = 0;
     activePlayer = 1;
     // Hide the dice
     document.querySelector('.dice').style.display = 'none';
+    // Set current- and score- ids to zero
+    document.querySelector('#current-0').textContent = 0;
+    document.querySelector('#current-1').textContent = 0;
+    document.querySelector('#score-0').textContent = 0;
+    document.querySelector('#score-1').textContent = 0;
 }
 
 function clickRollDice() {
@@ -40,8 +44,9 @@ function clickRollDice() {
         // console.log('dice: ', dice)
 
         // Display dice with correct number
-        document.querySelector('.dice').style.display = 'block';
-        document.querySelector('.dice').src = 'dice-' + dice + '.png';
+        var diceDOM = document.querySelector('.dice');
+        diceDOM.style.display = 'block';
+        diceDOM.src = 'dice-' + dice + '.png';
 
         // Set the score based on round Score
         updateScores(dice);
@@ -51,10 +56,17 @@ function clickRollDice() {
 }
 
 function clickHold() {
-    document.querySelector('.btn-hold')
-    switchActivePlayer();
+    document.querySelector('.btn-hold').addEventListener('click', () => {
+        switchActivePlayer();
+    })
+
 }
 
+function gameTerminate() {
+    var content = document.querySelector('#name-' + activePlayer).textContent;
+    document.querySelector('#name-' + activePlayer).innerHTML = '<b>' + content + '</b>' + '<br>' + '<p> Winner!</p>';
+    // startGame();
+}
 /*
 function rollDice() {
     // Roll the dice
@@ -84,6 +96,10 @@ function updateScores(dice) {
     // update total score
     scores[activePlayer] += roundScore;
     document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
+
+    if (scores[activePlayer] >= 100) {
+        gameTerminate();
+    }
 }
 
 function updateActivePlayer(dice) {
