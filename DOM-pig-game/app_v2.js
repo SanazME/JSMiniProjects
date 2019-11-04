@@ -57,15 +57,33 @@ function rollDice() {
 
         // console.log(rollDiceButton)
         // Roll the dice
-        var dice = Math.floor(Math.random() * 6) + 1;
 
         // Display dice with correct number
-        var diceDOM = document.querySelector('.dice');
-        diceDOM.style.display = 'block';
-        diceDOM.src = 'dice-' + dice + '.png';
+        var diceDOM = document.querySelectorAll('.dice');
 
-        // Set the score based on round Score
-        updateScores(dice);
+        for (let i = 0; i < diceDOM.length; i++) {
+            diceDOM[i].style.display = 'block';
+            // Roll dice
+            var dice = Math.floor(Math.random() * 6) + 1;
+            diceDOM[i].src = 'dice-' + dice + '.png';
+            // Set score based on round Score
+            console.log('diceDOM' + i + ':' + dice)
+            updateScores(dice);
+            if (dice === 1) {
+                break;
+            }
+        }
+
+        // document.querySelectorAll('.dice').forEach(function (diceDOM) {
+        //     diceDOM.style.display = 'block';
+        //     // Roll the dice
+        //     var dice = Math.floor(Math.random() * 6) + 1;
+        //     diceDOM.src = 'dice-' + dice + '.png';
+        //     // Set the score based on round Score
+        //     console.log(dice)
+        //     updateScores(dice);
+        // })
+
     }
 }
 
@@ -78,22 +96,33 @@ function updateScores(dice) {
     - reset current score
     - reset previousRoll variable
     */
-
-    if (dice === 6 && previousRoll === 6) {
-        scores[activePlayer] = 0
+    if (dice === 1) {
+        // scores[activePlayer] = 0;
         // Update the score display for active player
-        document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
+        // document.querySelector('#score-' + activePlayer).textContent = '0';
         switchActivePlayer();
-
-    } else if (dice === 1) {
-        switchActivePlayer();
-
     } else {
         roundScore += dice;
         document.querySelector('#current-' + activePlayer).textContent = roundScore;
-        // Update previousRoll
-        previousRoll = dice;
     }
+
+
+    // Challenge 2
+    // if (dice === 6 && previousRoll === 6) {
+    //     scores[activePlayer] = 0
+    //     // Update the score display for active player
+    //     document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
+    //     switchActivePlayer();
+
+    // } else if (dice === 1) {
+    //     switchActivePlayer();
+
+    // } else {
+    //     roundScore += dice;
+    //     document.querySelector('#current-' + activePlayer).textContent = roundScore;
+    //     // Update previousRoll
+    //     previousRoll = dice;
+    // }
 }
 
 function holdGame() {
@@ -143,5 +172,11 @@ function resetCurrentScore() {
     document.querySelector('#current-0').textContent = 0;
     document.querySelector('#current-1').textContent = 0;
     // Hide dice
-    document.querySelector('.dice').style.display = 'none';
+    // document.querySelector('.dice').style.display = 'none';
+    document.querySelectorAll('.dice').forEach(function (dice) {
+        dice.style.display = 'none';
+    })
+
+    // document.querySelector('#dice-1').style.display = 'none';
+    // document.querySelector('#dice-2').style.display = 'none';
 }
