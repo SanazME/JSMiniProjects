@@ -7,10 +7,15 @@ GAME RULES:
 - The player can choose to 'Hold', which means that his ROUND score gets added to his GLBAL score. After that, it's the next player's turn
 - The first player to reach 100 points on GLOBAL score wins the game
 
+Change the game to follow these rules:
+1. A player looses his ENTIRE score when he rolls two 6 in a row. After that, it's the next player's turn. (Hint: Always save the previous dice roll in a separate variable)
+2. Add an input field to the HTML where players can set the winning score, so that they can change the predefined score of 100. (Hint: you can read that value with the .value property in JavaScript. This is a good oportunity to use google to figure this out :)
+3. Add another dice to the game, so that there are two dices now. The player looses his current score when one of them is a 1. (Hint: you will need CSS to position the second dice, so take a look at the CSS code for the first one.)
 */
 
+
 // Declare variables
-var scores, roundScore, activePlayer, gameEnd, isGamePlaying;
+var scores, roundScore, activePlayer, gameEnd, isGamePlaying, previousRoll;
 
 // Initialize the game
 resetGame();
@@ -29,6 +34,8 @@ function resetGame() {
     roundScore = 0;
     activePlayer = 0;
     isGamePlaying = true;
+    previousRoll = Infinity;
+
     // reset scores
     resetCurrentScore();
     document.querySelector('#score-0').textContent = 0;
@@ -43,7 +50,6 @@ function resetGame() {
     document.querySelector('.player-0-panel').classList.remove('active');
     document.querySelector('.player-1-panel').classList.remove('active');
     document.querySelector('.player-0-panel').classList.add('active');
-
 }
 
 function rollDice() {
@@ -52,7 +58,6 @@ function rollDice() {
         // console.log(rollDiceButton)
         // Roll the dice
         var dice = Math.floor(Math.random() * 6) + 1;
-        // console.log('dice: ', dice)
 
         // Display dice with correct number
         var diceDOM = document.querySelector('.dice');
@@ -61,8 +66,33 @@ function rollDice() {
 
         // Set the score based on round Score
         updateScores(dice);
-        // Change active player if dice === 1
-        updateActivePlayer(dice);
+    }
+}
+
+function updateScores(dice) {
+    /*
+    if the player rolls two 6 in a row:
+    - set the total score to zero 
+    - update the score display of active player
+    - switch active player
+    - reset current score
+    - reset previousRoll variable
+    */
+
+    if (dice === 6 && previousRoll === 6) {
+        scores[activePlayer] = 0
+        // Update the score display for active player
+        document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
+        switchActivePlayer();
+
+    } else if (dice === 1) {
+        switchActivePlayer();
+
+    } else {
+        roundScore += dice;
+        document.querySelector('#current-' + activePlayer).textContent = roundScore;
+        // Update previousRoll
+        previousRoll = dice;
     }
 }
 
@@ -73,7 +103,17 @@ function holdGame() {
         document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
 
         // Check if user has won
-        if (scores[activePlayer] >= 20) {
+        // Get winning score
+        var inputFinalScore = Number(document.querySelector('.winning-score').value);
+        var winningScore;
+
+        if (inputFinalScore) {
+            winningScore = inputFinalScore;
+        } else {
+            winningScore = 100;
+        }
+
+        if (scores[activePlayer] >= winningScore) {
             document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
             document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
             isGamePlaying = false;
@@ -93,24 +133,13 @@ function switchActivePlayer() {
     document.querySelector('.player-1-panel').classList.toggle('active');
     // Reset current score
     resetCurrentScore();
-
     return activePlayer
-}
-
-function updateScores(dice) {
-    // Calculate roundScore
-    roundScore += dice === 1 ? 0 : dice;
-    // update current score
-    document.querySelector('#current-' + activePlayer).textContent = roundScore;
-}
-
-function updateActivePlayer(dice) {
-    activePlayer = dice === 1 ? switchActivePlayer() : activePlayer;
 }
 
 function resetCurrentScore() {
     // Set current- and score- ids to zero
     roundScore = 0
+    previousRoll = Infinity;
     document.querySelector('#current-0').textContent = 0;
     document.querySelector('#current-1').textContent = 0;
     // Hide dice
