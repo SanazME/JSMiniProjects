@@ -56,10 +56,6 @@ var budgetController = (function () {
             // Return new item
             return newItem
         },
-
-        testing: function () {
-            return data;
-        }
     }
 
 })();
@@ -85,6 +81,23 @@ let UIController = (function () {
 
         getDOMStrings: function () {
             return DOMStrings;
+        },
+
+        addListItem: function (item, type) {
+            var html;
+
+            // Create HTML strings with placeholder text
+            if (type === 'inc') {
+                html = '<div class="item clearfix" id="income-%id%"> <div class="item__description">%description%</div> <div class="right clearfix">  <div class="item__value">%value%</div> <div class="item__delete"> <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div> </div> </div>';
+            } else if (type === 'exp') {
+                html = '<div class="item clearfix" id="expense-%id%"> <div class="item__description">%description%</div> <div class="right clearfix"> <div class="item__value">%value%</div> <div class="item__percentage">21%</div> <div class="item__delete"> <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div> </div> </div>';
+            };
+
+
+            // Replace placeholder text with actual data
+
+
+            // Insert HTML into DOM
         }
     };
 
@@ -118,11 +131,10 @@ let controller = (function (budgetCtrl, UICtrl) {
 
         // 2. Add the item to the budget controller
         newItem = budgetController.addItem(input.type, input.description, input.value);
-        console.log('data object : ', budgetController.testing())
-
+        console.log(newItem)
 
         // 3. Add the item to UI
-
+        UICtrl.addListItem(newItem, input.type);
 
         // 4. Calculate the budget
 
