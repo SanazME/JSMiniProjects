@@ -107,6 +107,20 @@ let UIController = (function () {
 
             // Insert HTML into DOM
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
+        },
+
+        clearFields: function () {
+            var fields, fieldsArray;
+
+            fields = document.querySelectorAll(DOMStrings.inputDescription + ', ' + DOMStrings.inputValue);
+            // Create a shallow copy (slice) of an array, here we convert a list to array
+            // to use array forEach method on it
+            fieldsArray = Array.prototype.slice.call(fields);
+
+            fieldsArray.forEach((current, index, array) => {
+                console.log(`current : ${current.value}, index : ${index}, array : ${array}`)
+                current.value = "";
+            });
         }
     };
 
@@ -145,10 +159,13 @@ let controller = (function (budgetCtrl, UICtrl) {
         // 3. Add the item to UI
         UICtrl.addListItem(newItem, input.type);
 
-        // 4. Calculate the budget
+        // 4. Clear fields
+        UICtrl.clearFields();
+
+        // 5. Calculate the budget
 
 
-        // 5. Display the budget
+        // 6. Display the budget
         console.log('it works')
     }
 
