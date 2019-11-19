@@ -121,6 +121,8 @@ let UIController = (function () {
                 console.log(`current : ${current.value}, index : ${index}, array : ${array}`)
                 current.value = "";
             });
+
+            fieldsArray[0].focus();
         }
     };
 
