@@ -23,7 +23,9 @@ var budgetController = (function () {
         totals: {
             exp: 0,
             inc: 0
-        }
+        },
+        budget: 0,
+        percentage: -1
     };
 
     return {
@@ -51,14 +53,50 @@ var budgetController = (function () {
             data.allItems[type].push(newItem);
 
             // add to total
-            data.totals[type] += Number(val);
+            // data.totals[type] += parseFloat(val);
 
             // Return new item
             return newItem
         },
 
+        calculateTotals: function (type) {
+            // Calculate the total of the type
+            var sum = 0;
+            data.allItems[type].forEach(function (ele) {
+                sum += ele.value;
+            })
+            data.totals[type] = sum;
+        },
+
         testing: function () {
             console.log(data)
+        },
+
+        calculateBudget: function () {
+            // Calculate total income & total expense
+            this.calculateTotals("inc");
+            this.calculateTotals("exp");
+
+            // Calculate total budget : total income - total expense
+            data.budget = data.totals.inc - data.totals.exp;
+
+            // Calculate the percentage of income that we spend
+            if (data.totals.inc > 0) {
+                data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
+            } else {
+                data.percentage = -1;
+            }
+
+        },
+
+        getBudget: function () {
+            return {
+                budget: data.budget,
+                income: data.totals.inc,
+                expense: data.totals.exp,
+                percentage: data.percentage
+            }
+
         }
     }
 
@@ -149,13 +187,17 @@ let controller = (function (budgetCtrl, UICtrl) {
     }
 
     let updateBudget = function () {
+        var budget;
+
         // 1. Calculate the budget
+        budgetCtrl.calculateBudget();
 
         // 2. Return budget
+        budget = budgetCtrl.getBudget();
 
         // 3. Display the budget
-
-
+        console.log(budget)
+        // UICtrl.displayBudget(budget);
     }
 
     let ctrlAddItem = function () {
